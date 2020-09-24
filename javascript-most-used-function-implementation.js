@@ -2,27 +2,27 @@
 Object.defineProperty(Object, 'assign', {
     value: function assign(target, source) {
 
-        if(target == null){
+        if (target == null) {
             throw TypeError("can not convert null to object you know");
         }
 
         let to = Object(target);   // to do find out why
-        for(let i = 1; i < arguments.length; i++){
+        for (let i = 1; i < arguments.length; i++) {
             let source = arguments[i];
-            if(source !== null){
-                for(let property in source){
+            if (source !== null) {
+                for (let property in source) {
                     to[property] = source[property]
                 }
             }
         }
-    
+
         return to
     },
     writable: true,
     configurable: true
 })
 
-let testObj = Object.assign({}, {a:5}, {B:4,c:89});
+let testObj = Object.assign({}, { a: 5 }, { B: 4, c: 89 });
 console.log(testObj)
 
 /* Object.create() easy version
@@ -37,82 +37,92 @@ console.log(testObj)
 
 
 
-// call
-Function.prototype.myCall = function(...args) {
+/* call  */
+
+
+Function.prototype.myCall = function (...args) {
     // 参数检查
-    if(typeof this !== "function") {
-      throw new Error('Must call with a function');
+    if (typeof this !== "function") {
+        throw new Error('Must call with a function');
     }
-  
+
     const realThis = args[0] || window;
     const realArgs = args.slice(1);
     const funcSymbol = Symbol('func');
     realThis[funcSymbol] = this;   // 这里的this是原方法，保存到传入的第一个参数上
-  
+
     //用传入的参数来调方法，方法里面的this就是传入的参数了
-    const res = realThis[funcSymbol](...realArgs); 
-  
+    const res = realThis[funcSymbol](...realArgs);
+
     delete realThis[funcSymbol];  // 最后删掉临时存储的原方法
-  
+
     return res;  // 将执行的返回值返回
-  }
+}
 
 
-// apply
-Function.prototype.myApply = function(...args) {
-    if(typeof this !== "function") {
-      throw new Error('Must call with a function');
+/*  apply  */
+Function.prototype.myApply = function (...args) {
+    if (typeof this !== "function") {
+        throw new Error('Must call with a function');
     }
-  
+
     const realThis = args[0] || window;
     // 直接取第二个参数，是一个数组
-    const realArgs = args[1];        
+    const realArgs = args[1];
     const funcSymbol = Symbol('func');
-    realThis[funcSymbol] = this;   
-  
-    const res = realThis[funcSymbol](...realArgs); 
-  
-    delete realThis[funcSymbol]; 
-  
-    return res; 
-  }
-  
+    realThis[funcSymbol] = this;
 
-// bind
-Function.prototype.myBind = function(...args) {
-    if(typeof this !== "function") {
-      throw new Error('Must call with a function');
-    }
-  
-    const _func = this;    // 原方法
-    const realThis = args[0] || window;   // 绑定的this
-    const otherArgs = args.slice(1);    // 取出后面的参数作为新函数的默认参数
-  
-    return function(...args2) {   // 返回一个方法
-      return _func.apply(realThis, [...otherArgs,...args2]);  // 拼接存储参数和新参数，然后用apply执行
-    }
-  }
+    const res = realThis[funcSymbol](...realArgs);
+
+    delete realThis[funcSymbol];
+
+    return res;
+}
 
 
-  Function.prototype.bind = function (oThis) {
-    var aArgs = Array.prototype.slice.call(arguments, 1)；
-    var fToBind = this；
-    var fNOP = function () {}；
-    var fBound = function () {
-      fBound.prototype = this instanceof fNOP ? new fNOP() : fBound.prototype；
-      return fToBind.apply(this instanceof fNOP ? this : oThis || this, aArgs )
-    }   
-    if( this.prototype ) {
-      fNOP.prototype = this.prototype；
+/* bind  
+you need to concat arguments, when you bind and when you executes the function, arguments can be added
+you need to return a function
+*/
+Function.prototype.bind2 = function (context) {
+
+    if (typeof this !== "function") {
+        throw new Error("Function.prototype.bind - what is trying to be bound is not callable");
     }
-    return fBound；
-  }
-  
+
+    var self = this;
+    var args = Array.prototype.slice.call(arguments, 1);
+    var fNOP = function () { };
+
+    var fbound = function () {
+        self.apply(this instanceof self ? this : context, args.concat(Array.prototype.slice.call(arguments)));
+    }
+
+    fNOP.prototype = this.prototype;
+    fbound.prototype = new fNOP();
+
+    return fbound;
+
+}
+
+
+
+
+
 
 // new
 
 
-/* create your own constructor */
+
+
+
+
+
+
+
+
+/* create your own constructor 
+enable the new constructor to construct object using arguments list */
 
 Function.prototype.construct = function (args) {
     let oldFunc = this;
