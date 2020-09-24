@@ -38,45 +38,95 @@ console.log(testObj)
 
 
 /* call  */
+Function.prototype.customizedCall = function (obj) {
 
-
-Function.prototype.myCall = function (...args) {
-    // 参数检查
     if (typeof this !== "function") {
-        throw new Error('Must call with a function');
+        throw new Error(this + "is not callable");
     }
 
-    const realThis = args[0] || window;
-    const realArgs = args.slice(1);
-    const funcSymbol = Symbol('func');
-    realThis[funcSymbol] = this;   // 这里的this是原方法，保存到传入的第一个参数上
+    // to judge if a variable is undefined using typeof
+    // because undefined can be assigned a new value as undefined = 3
+    if(typeof obj === 'undefined' || obj === null){
+        obj = global || window;
+    }
+    
+    let args = []
+    for (let i = 1; i < arguments.length; i++) {
+        args.push(arguments[i])
+    }
 
-    //用传入的参数来调方法，方法里面的this就是传入的参数了
-    const res = realThis[funcSymbol](...realArgs);
+    // ES3 change
+    obj = new Object(obj);
 
-    delete realThis[funcSymbol];  // 最后删掉临时存储的原方法
-
-    return res;  // 将执行的返回值返回
+    // func may not be the unique on the obj
+    // Symbol may be the way, but essentially symbol means unique
+    // Date.getTime() might do the effects
+    const func = Symbol();
+    obj[func] = this;
+    // spread operator is good ES6
+    // you can try new Function() to create the same effects
+    let resolve = obj.func(...args);
+    delete obj.func
+    // if the master function returns
+    return resolve;
 }
 
 
 /*  apply  */
-Function.prototype.myApply = function (...args) {
+Function.prototype.customizedApply = function (obj, argsArray) {
     if (typeof this !== "function") {
-        throw new Error('Must call with a function');
+        throw new Error(this + "is not callable");
     }
 
-    const realThis = args[0] || window;
-    // 直接取第二个参数，是一个数组
-    const realArgs = args[1];
-    const funcSymbol = Symbol('func');
-    realThis[funcSymbol] = this;
+    // to judge if a variable is undefined using typeof
+    // because undefined can be assigned a new value as undefined = 3
+    if(typeof obj === 'undefined' || obj === null){
+        obj = global || window;
+    }
 
-    const res = realThis[funcSymbol](...realArgs);
+    // ES3 change
+    obj = new Object(obj);
 
-    delete realThis[funcSymbol];
+    // func may not be the unique on the obj
+    // Symbol may be the way, but essentially symbol means unique
+    // Date.getTime() might do the effects
+    const func = generateUUID();
+    obj[func] = this;
+    // spread operator is good ES6
+    // you can try new Function() to create the same effects
+    let funcString = generateFunc(argsArray.length);
+    let resolve = (new Function(funcString))(obj,func,argsArray);
+    delete obj.func
+    // if the master function returns
+    return resolve;
+}
 
-    return res;
+function generateUUID() {
+    return '_' + Date.getTime();
+}
+
+// function generateUUID(){
+//     var i, random;
+//     var uuid = '';
+//     for (i = 0; i < 32; i++) {
+//         random = Math.random() * 16 | 0;
+//         if (i === 8 || i === 12 || i === 16 || i === 20) {
+//             uuid += '-';
+//         }
+//         uuid += (i === 12 ? 4 : (i === 16 ? (random & 3 | 8) : random))
+//             .toString(16);
+//     }
+//     return uuid;
+// }
+
+function generateFunc(length) {
+    let str = 'return arguments[0][arguments[1]](';
+    for(let i = 0; i < length; i++) {
+        str += 'arguments[2][' + i + '],'
+    }
+    str = str.substr(0,str.length - 1)
+    str += ')'
+    return str;
 }
 
 
@@ -84,7 +134,7 @@ Function.prototype.myApply = function (...args) {
 you need to concat arguments, when you bind and when you executes the function, arguments can be added
 you need to return a function
 */
-Function.prototype.bind2 = function (context) {
+Function.prototype.customizedBind = function (context) {
 
     if (typeof this !== "function") {
         throw new Error("Function.prototype.bind - what is trying to be bound is not callable");
@@ -104,11 +154,6 @@ Function.prototype.bind2 = function (context) {
     return fbound;
 
 }
-
-
-
-
-
 
 // new
 
@@ -139,7 +184,6 @@ Function.prototype.construct = function (args) {
 //     this.call(newF,args)
 //     return newF
 // }
-
 
 function MyConstructor() {
     for (let nProp = 0; nProp < arguments.length; nProp++) {
