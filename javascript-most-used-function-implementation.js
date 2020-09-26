@@ -28,12 +28,12 @@ console.log(testObj)
 /* Object.create() easy version
  create a new object based on the parameter passed in */
 
-// Object.defineProperty(Object, 'create', {
-//     value: function create(obj) {
-//     function F() {};
-//     F.prototype = obj;
-//     return new F();
-// }})
+Object.defineProperty(Object, 'create', {
+    value: function create(obj) {
+    function F() {};
+    F.prototype = obj;
+    return new F();
+}})
 
 
 
@@ -200,4 +200,21 @@ console.log(myInstance.property2);
 console.log(myInstance instanceof MyConstructor); // logs "true"
 console.log(myInstance.constructor);
 
+
+/* find properties through the prototype chain  */
+
+function lookupProperty(obj, propertyName) {
+    let current = obj
+    if(current == null){
+        throw new Error("can not read property " + propertyName + " of null")
+    }
+
+    while(current){
+        if(current.hasOwnProperty(propertyName)){
+            return current[propertyName]
+        }
+        current = Object.getPrototypeOf(current);
+    }
+    return undefined
+}
 
