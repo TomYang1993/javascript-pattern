@@ -26,7 +26,10 @@ let testObj = Object.assign({}, { a: 5 }, { B: 4, c: 89 });
 console.log(testObj)
 
 /* Object.create() easy version
- create a new object based on the parameter passed in */
+ create a new object based on the parameter passed in 
+ create a temp F as a proxy, so child can only inherit reusable method, but will not
+ inherit anything from the new Parent() instance which is normally set up as properties of this,
+ because child's prototype is new F() and then Parent.prototype instead of new Parent() then Parent.prototype */
 
 Object.defineProperty(Object, 'create', {
     value: function create(obj) {
@@ -158,6 +161,16 @@ Function.prototype.customizedBind = function (context) {
 // new
 
 
+
+function customizedNew() {
+    const obj = new Object();
+    Constructor = Array.prototype.shift.call(arguments);
+    obj.__proto__ = Constructor.prototype;
+    let ret = Constructor.apply(obj,arguments);
+    return typeof ret === 'object'? ret : obj;
+}
+
+// customizedNew(Function, a1, a2, a3 ,...)
 
 
 
