@@ -159,9 +159,6 @@ Function.prototype.customizedBind = function (context) {
 }
 
 // new
-
-
-
 function customizedNew() {
     const obj = new Object();
     Constructor = Array.prototype.shift.call(arguments);
@@ -170,11 +167,7 @@ function customizedNew() {
     return typeof ret === 'object'? ret : obj;
 }
 
-// customizedNew(Function, a1, a2, a3 ,...)
-
-
-
-
+// usage: customizedNew(Function, a1, a2, a3 ,...)
 
 
 
