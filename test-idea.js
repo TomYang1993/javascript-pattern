@@ -1,26 +1,22 @@
-var value = 2;
-
-var foo = {
-    value: 1
-};
-
-function bar(name, age) {
-    this.habit = 'shopping';
-    console.log(this.value);
-    console.log(name);
-    console.log(age);
+let p = new Promise((resolve, reject) => {
+    setTimeout(() => resolve('P1'), 1000)
+});
+let f1 = function (data) {
+    console.log(data)
+    return new Promise((resolve, reject) => {
+        setTimeout(() => resolve('F1'), 2000)
+    });
 }
 
-bar.prototype.friend = 'kevin';
+// p.then(f1).then((data) => console.log(data)).then(data => console.log(data))
 
-var bindFoo = bar.bind(foo, 'daisy');
 
-var obj = new bindFoo('18');
-// undefined
-// daisy
-// 18
-console.log(obj.habit);
-console.log(obj.friend);
-// shopping
-// kevin
 
+
+function some(data) {
+    console.log(data)
+}
+
+p.then(some, (error) => {
+
+}).then(some).then(some)

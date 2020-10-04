@@ -41,7 +41,7 @@ function customizedPromise(cb) {
 // it will point to the window
 customizedPromise.prototype.then = function (onFulfilled, onRejected) {
     console.log("when it's all defined")
-    
+
     let self = this;
     // console.log(self)
     let bridgePromise;
@@ -87,7 +87,7 @@ customizedPromise.prototype.then = function (onFulfilled, onRejected) {
                     // value passed from P's resolved value, pass into f1, and execute f1
                     // define another promise, and using .then method on it in the resolvePromise function etc
                     let x = onFulfilled(value);
-                    
+
                     resolvePromise(bridgePromise, x, resolve, reject);
                 } catch (e) {
                     reject(e);
@@ -138,7 +138,7 @@ customizedPromise.prototype.catch = function (onRejected) {
 
 
 let p = new customizedPromise((resolve, reject) => {
-    setTimeout(() => resolve('P1'), 5000)
+    setTimeout(() => resolve('P1'), 1000)
 });
 let f1 = function (data) {
     console.log(data)
@@ -159,4 +159,28 @@ let f3 = function (data) {
 let errorLog = function (error) {
     console.log(error)
 }
-p.then(f1).then(f2).then(f3).catch(errorLog)
+// p.then(f1).then(f2).then(f3).catch(errorLog)
+
+
+p.then(f1).then((data) => console.log("data 1",data)).then((data) => console.log("data", data))
+
+
+
+// promisify a async callback function like fs.readFile to have the structure of promise
+
+customizedPromise.promisify = function (func) {
+
+    return function () {
+        let args = Array.from(arguments);
+        return new customizedPromise((resolve, reject) => {
+            let cb = function (err, data) {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(data)
+                }
+            }
+            func.apply(null, args.concat(cb))
+        })
+    }
+}

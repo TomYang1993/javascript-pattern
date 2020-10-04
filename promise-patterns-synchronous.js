@@ -70,6 +70,8 @@ function some(data) {
     console.log(data)
 }
 
+// the ultimate right behaviour should be the last two console.log logs out undefined instead of the data
+ 
 test.then(some, (error) => {
 
 }).then(some).then(some)
