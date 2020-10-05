@@ -17,6 +17,17 @@ function some(data) {
     console.log(data)
 }
 
-p.then(some, (error) => {
+// p.then(some, (error) => {
 
-}).then(some).then(some)
+// }).then(some).then(some)
+
+// p.then(5, (error) => {
+
+// }).then(5).then(some)
+
+
+const promise = Promise.resolve()
+  .then(() => {
+    return promise
+  })
+promise.catch(console.error)
