@@ -159,7 +159,7 @@ function resolvePromise(bridgePromise, x, resolve, reject) {
         }
     }
     else {
-        console.log("after whi is stopping")
+        console.log("x should be a primitive value")
         console.log("it resolves")
         resolve(x);
     }
@@ -175,7 +175,7 @@ customizedPromise.resolve = function (value) {
     });
 }
 
-customizedPromise.resolve = function (reason) {
+customizedPromise.reject = function (reason) {
     return new customizedPromise((resolve, reject) => {
         reject(reason);
     });
