@@ -41,12 +41,12 @@ function customizedPromise(cb) {
         })
     }
 
-    try{
+    try {
         cb(resolve, reject)
-    }catch(e){
+    } catch (e) {
         reject(e)
     }
-    
+
 }
 
 // be careful about arrow function's this if you define then function as an arrow function
@@ -181,6 +181,61 @@ customizedPromise.reject = function (reason) {
     });
 }
 
+
+customizedPromise.all = function (promises) {
+    return new customizedPromise((resolve, reject) => {
+        let numOfPromises = promises.length;
+        let timer = 0
+        let results = [];
+        for(let i = 0; i< numOfPromises; i++) {
+            promises[i].then((result) => {
+                results.push(result)
+                timer++
+                if(timer === numOfPromises){
+                    resolve(results)
+                }
+            },(err) => {
+                reject(err)
+            })
+        }
+    })
+}
+
+customizedPromise.race = function (promises) {
+    return new customizedPromise((resolve, reject) => {
+        let numOfPromises = promises.length;
+        for(let i = 0; i< numOfPromises; i++) {
+            promises[i].then((result) => {
+                resolve(result)
+            },(err) => {
+                reject(err)
+            })
+        }
+    })
+}
+
+
+
+/* promisify a async callback function like fs.readFile to have the structure of promise */
+
+customizedPromise.promisify = function (func) {
+
+    return function () {
+        let args = Array.from(arguments);
+        return new customizedPromise((resolve, reject) => {
+            let cb = function (err, data) {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(data)
+                }
+            }
+            func.apply(null, args.concat(cb))
+        })
+    }
+}
+
+
 /*  parallel asynchronous tasks tests  */
 
 // let p = new customizedPromise((resolve, reject) => {
@@ -249,7 +304,7 @@ customizedPromise.reject = function (reason) {
 //     console.log('promise2', promise2)
 //   }, 2000)
 
-
+/*  test the status won't change after resolve or reject */
 // const promise = new customizedPromise((resolve, reject) => {
 //     resolve('success1')
 //     reject('error')
@@ -264,63 +319,91 @@ customizedPromise.reject = function (reason) {
 //         console.log('catch: ', err)
 //     })
 
+/*  value will pass through, because onFulfill or onReject all have default functions as passing by values */
+// customizedPromise.resolve(1)
+//   .then((res) => {
+//     console.log("first level promise call back",res)
+//     return 2
+//   })
+//   .catch((err) => {
+//     return 3
+//   })
+//   .then((res) => {
+//     console.log("third level promise call back",res)
+//   })
 
-customizedPromise.resolve(1)
-  .then((res) => {
-    console.log(res)
-    return 2
-  })
-  .catch((err) => {
-    return 3
-  })
-  .then((res) => {
-    console.log(res)
-  })
+/* this one tests two thens should print the value at almost the same time */
+// const promise = new customizedPromise((resolve, reject) => {
+//     setTimeout(() => {
+//       console.log('once')
+//       resolve('success')
+//     }, 1000)
+//   })
+
+//   const start = Date.now()
+//   promise.then((res) => {
+//     console.log(res, Date.now() - start)
+//   })
+//   promise.then((res) => {
+//     console.log(res, Date.now() - start)
+//   })
+
+/* return a new object of error type, promise treats it as a promise object
+only throw or reject will trigger error */
+// customizedPromise.resolve()
+//   .then(() => {
+//     return new Error('error!!!')
+//   })
+//   .then((res) => {
+//     console.log('then: ', res)
+//   })
+//   .catch((err) => {
+//     console.log('catch: ', err)
+//   })
+
+/*  value will pass through, because onFulfill or onReject all have default functions as passing by values
+2, promise.resolve(3) are not functions they will be changed into function */
+// customizedPromise.resolve(1)
+// .then(2)
+// .then(Promise.resolve(3))
+// .then((value) => console.log("last step",value))
 
 
+// customizedPromise.resolve()
+//   .then(function success (res) {
+//     throw new Error('error')
+//   }, function fail1 (e) {
+//     console.error('fail1: ', e)
+//   })
+//   .catch(function fail2 (e) {
+//     console.error('fail2: ', e)
+//   })
+
+// Promise.resolve()
+//   .then(function success (res) {
+//     foo.bar();
+//   }, function fail1 (e) {
+//     console.error('fail1: ', e)
+//   })
+//   .catch(function fail2 (e) {
+//     console.error('fail2: ', e)
+//   })
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* promisify a async callback function like fs.readFile to have the structure of promise */
-
-customizedPromise.promisify = function (func) {
-
-    return function () {
-        let args = Array.from(arguments);
-        return new customizedPromise((resolve, reject) => {
-            let cb = function (err, data) {
-                if (err) {
-                    reject(err)
-                } else {
-                    resolve(data)
-                }
-            }
-            func.apply(null, args.concat(cb))
-        })
-    }
-}
+/*  treat then as asynchronous and micro task, but then is like asynchronous plus a setTimeout,
+it's just setTimeout always gets in the first of the queue, so it looks like a micro task that always finishes
+before any other macro task */
+// Promise.resolve()
+// .then(() => {
+//   console.log('then')
+// })
+// process.nextTick(() => {
+//     console.log('nextTick')
+//   })
+//   setImmediate(() => {
+//     console.log('setImmediate')
+//   })
+//   console.log('end')
 
 
 // let promise = new Promise((resolve,reject)=>{
@@ -335,3 +418,16 @@ customizedPromise.promisify = function (func) {
 //  }, (reason) => {
 //    console.log(reason);
 //  });
+
+setTimeout(()=>{
+    console.log('timer1')
+    Promise.resolve().then(function() {
+        console.log('promise1')
+    })
+}, 0)
+setTimeout(()=>{
+    console.log('timer2')
+    Promise.resolve().then(function() {
+        console.log('promise2')
+    })
+}, 0)
