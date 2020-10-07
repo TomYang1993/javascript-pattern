@@ -419,15 +419,16 @@ before any other macro task */
 //    console.log(reason);
 //  });
 
-setTimeout(()=>{
-    console.log('timer1')
-    Promise.resolve().then(function() {
-        console.log('promise1')
-    })
-}, 0)
-setTimeout(()=>{
-    console.log('timer2')
-    Promise.resolve().then(function() {
-        console.log('promise2')
-    })
-}, 0)
+/* node event loop vs browser event loop, node v11 has changed into the same concept, so no major difference */
+// setTimeout(()=>{
+//     console.log('timer1')
+//     Promise.resolve().then(function() {
+//         console.log('promise1')
+//     })
+// }, 0)
+// setTimeout(()=>{
+//     console.log('timer2')
+//     Promise.resolve().then(function() {
+//         console.log('promise2')
+//     })
+// }, 0)
