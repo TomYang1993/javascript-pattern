@@ -235,6 +235,20 @@ customizedPromise.promisify = function (func) {
     }
 }
 
+customizedPromise.cancellable = function (promise) {
+
+    let cancelled = false;
+
+    let wrapperPromise = new customizedPromise((resolve, reject) => {
+        promise.then(value => cancelled? reject("promise cancelled") : resolve(value), err => cancelled? reject("promise cancelled") : reject(err))
+    })
+
+  return {
+    wrapperPromise: wrapperPromise,
+    cancel: () => cancelled = true
+  }
+}
+
 
 /*  parallel asynchronous tasks tests  */
 
