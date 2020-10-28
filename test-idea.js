@@ -78,9 +78,7 @@ function sum2(x, y){
   console.log(actual);
   
   console.log(expected === actual);
-  
-  _.isEqual(expected, actual);
-  
+    
   
   function test(expected, actual){
   for(let i = 0; i < expected.length; i++){
@@ -92,3 +90,26 @@ function sum2(x, y){
   }
   
   console.log(test(expected, actual))
+
+  // let test1 = 1;
+  // function testDefault(y = test1 + 1) {
+  //   console.log(y)
+  // }
+
+  // testDefault()
+
+  // test1 = 5
+  // testDefault()
+
+
+  // let testObj = {
+  //   name: 'tom',
+  //   sex: 'male'
+  // }
+
+  // function testSpread(name, sex){
+  //   console.log(name)
+  // }
+
+
+  // testSpread(...testObj)

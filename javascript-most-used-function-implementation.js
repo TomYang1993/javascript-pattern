@@ -10,8 +10,13 @@ Object.defineProperty(Object, 'assign', {
         for (let i = 1; i < arguments.length; i++) {
             let source = arguments[i];
             if (source !== null) {
+                // for in go through enumerable properties including inherited ones
                 for (let property in source) {
-                    to[property] = source[property]
+                    /* object assign only copy enumerable and own properties from a source object
+                    call on object prototype here is because hasOwnProperty might be shadowed */
+                    if(Object.prototype.hasOwnProperty.call(source, property)){
+                        to[property] = source[property]
+                    }
                 }
             }
         }
@@ -37,6 +42,11 @@ Object.defineProperty(Object, 'create', {
     F.prototype = obj;
     return new F();
 }})
+
+Object.create(
+    Object.getPrototypeOf(obj), 
+    Object.getOwnPropertyDescriptors(obj) 
+  );
 
 
 
