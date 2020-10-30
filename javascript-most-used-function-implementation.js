@@ -43,6 +43,13 @@ Object.defineProperty(Object, 'create', {
     return new F();
 }})
 
+/* 
+Object.create(proto, propertiesObject)
+propertiesObject Optional
+If specified and not undefined, an object whose enumerable own properties 
+(that is, those properties defined upon itself and not enumerable properties along its prototype chain)
+ specify property descriptors to be added to the newly-created object, with the corresponding property names.
+  These properties correspond to the second argument of Object.defineProperties().*/
 Object.create(
     Object.getPrototypeOf(obj), 
     Object.getOwnPropertyDescriptors(obj) 

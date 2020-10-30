@@ -92,9 +92,12 @@ function sum2(x, y){
   console.log(test(expected, actual))
 
   // let test1 = 1;
-  // function testDefault(y = test1 + 1) {
-  //   console.log(y)
-  // }
+  function testDefault(y = test1 + 1) {
+    console.log(y)
+  }
+
+  console.log(testDefault.name)
+  console.log(testDefault.enumerable)
 
   // testDefault()
 
@@ -102,14 +105,9 @@ function sum2(x, y){
   // testDefault()
 
 
-  // let testObj = {
-  //   name: 'tom',
-  //   sex: 'male'
-  // }
-
-  // function testSpread(name, sex){
-  //   console.log(name)
-  // }
-
-
-  // testSpread(...testObj)
+  let result = ['jumpkick', 'roundhouse', 'uppercut'].reduce(function(acc, x){ 
+    console.log("here")
+    console.log(acc)
+    console.log(x)
+    console.log([x])
+    return [x].concat(acc); }, []);
