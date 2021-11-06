@@ -33,13 +33,17 @@ testObj.sub.x = testObj.x
 /* recursive way of deep clone */
 function deepClone(obj) {
 
-    let map = new Map();
+    let map = new WeakMap();
     function dc(obj){
+        if(obj instanceof Date){
+            return new Date(obj)
+        }
 
-
-        if (!isObject(obj)) return obj; // 非对象返回自身
-
-        let newObj = Array.isArray(obj)? [] : {};
+        if(obj instanceof RegExp){
+            return new RegExp(obj)
+        }
+        // do a shallow clone of object
+        let newObj = Object.create(Object.getPrototypeOf(obj), Object.getOwnPropertyDescriptors(obj));
         // check reference so it won't go into dc(clone) recursive again
         let existedObj = map.get(obj)
         if(existedObj){
@@ -48,10 +52,10 @@ function deepClone(obj) {
 
         map.set(obj, newObj)
 
-        let keys = Object.keys(obj);
+        let keys = Reflect.ownKeys(obj);
         for(let i = 0; i < keys.length; i++){
             let clone = obj[keys[i]]
-            if(isObject(clone)){
+            if(isObject(clone) && typeof test !== 'function'){
                 newObj[keys[i]] = dc(clone)
             }else{
                 newObj[keys[i]] = clone
@@ -64,8 +68,7 @@ function deepClone(obj) {
 }
 
 function isObject(test) {
-
-    return typeof test === 'object' && test != null;
+    return (typeof test === 'object' || typeof test === 'function' ) && test != null;
     // return Object.prototype.toString.call(test) === '[object Object]'
 }
 
