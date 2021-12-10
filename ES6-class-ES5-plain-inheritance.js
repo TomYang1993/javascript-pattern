@@ -35,7 +35,7 @@ const Animal = function(age) {
   Human.prototype.speak = function speak() {};
   
 
-
+/* ES6 implementation */
   class Animal {
     constructor(age) {
       this.age = age;

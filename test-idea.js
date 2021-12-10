@@ -1,113 +1,60 @@
-// TODO:
+// function Coin(){
+//   this.type = "finance"
+//   this.keywords = [1,4,7]
+// }
 
-function sum2(x, y){
-    return x + y;
-  }
-  
-  
-  // console.log(sum2(1, 2) === 3);
-  
-  // TODO:
-  
-  const sum = (...args) => args.reduce((ele, current) => ele + current, 0);
-  
-  
-  // console.log(sum() === 0);
-  // console.log(sum(1) === 1);
-  // console.log(sum(1, 2) === 3);
-  // console.log(sum(1, 2, 3, 4) === 10);
-  /**
-  mhncvhgchain(1, 2, 3, 4) => obj (default sums the values)
-  
-    .add(...args) => obj
-    .subtract(...args) => obj
-    .negate() => obj
-    .value => number
-  
-  */
-  
-  // interface ChainResult {
-  //   add: ... => ChainResult;
-  //   subtract: ... => ChainResult;
-  //   negate: ... => ChainResult;
-  //   value: number;
-  // }
-  // type ChainFcn = ... => ChainResult;
-  
-  const chain = (...args) => {
-    // TODO
-  
-    let initialValue = sum(...args)
-    
-    let add = (...args) => { 
-      
-      let value = initialValue + sum(...args)
-      return chain(value);
-    }
-    
-    let subtract = (...args) => { let value = initialValue - sum(...args)
-      return chain(value);
-    }
-    
-    let negate = (...args) => { let value = 0 - initialValue
-      return chain(value);
-    }
-    
-  
-    return {
-      add,
-      subtract,
-      negate,
-      value: initialValue
-    }
-  }
-  
-  
-  const c1 = chain(1, 2, 3, 4);
-  const c2 = c1.add(5, 6);
-  const c3 = c2.subtract(1, 7);
-  const c4 = c3.negate();
-  const c5 = c4.negate();
-  const c6 = c5.negate();
-  
-  const expected = [10, 21, 13, -13, 13, -13];
-  const actual = [c1, c2, c3, c4, c5, c6].map(c => c.value);
-  
-  console.log([c1, c2, c3, c4, c5, c6]);
-  
-  console.log(actual);
-  
-  console.log(expected === actual);
-    
-  
-  function test(expected, actual){
-  for(let i = 0; i < expected.length; i++){
-    if(expected[i] !== actual[i]){
-      return false
-    }
-    return true
-  }
-  }
-  
-  console.log(test(expected, actual))
+// function BitCoin(){
+//   this.name = "bitcoin"
+// }
 
-  // let test1 = 1;
-  function testDefault(y = test1 + 1) {
-    console.log(y)
-  }
+// BitCoin.prototype = new Coin();
 
-  console.log(testDefault.name)
-  console.log(testDefault.enumerable)
+// let b1 = new BitCoin();
+// let b2 = new BitCoin();
 
-  // testDefault()
+// console.log(b1.keywords)
+// console.log(b1.type)
+// console.log(b2.keywords)
+// console.log(b2.type)
 
-  // test1 = 5
-  // testDefault()
+// b1.keywords.push(10);
+
+// console.log(b2.keywords)
+
+// function MetalCoin(){
+//   this.type = "centralized finance"
+//   this.name = "metal coin"
+// }
+
+/*************************************** */
+
+function Coin(){
+  this.type = "finance"
+  this.keywords = [1,4,7]
+}
+
+Coin.prototype.trade = () => {console.log("coins for trade.")}
+
+function BitCoin(){
+  Coin.call(this);
+  this.name = "bitcoin"
+}
+
+BitCoin.prototype = new Coin();
+
+let b1 = new BitCoin();
+let b2 = new BitCoin();
+
+console.log(b1.keywords)
+console.log(b1.type)
+console.log(b2.keywords)
+console.log(b2.type)
+
+console.log(b1.trade())
+
+b1.keywords.push(10);
+
+console.log(b2.keywords)
 
 
-  let result = ['jumpkick', 'roundhouse', 'uppercut'].reduce(function(acc, x){ 
-    console.log("here")
-    console.log(acc)
-    console.log(x)
-    console.log([x])
-    return [x].concat(acc); }, []);
+
