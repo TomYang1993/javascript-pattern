@@ -30,7 +30,7 @@ Object.defineProperty(Object, 'assign', {
 let testObj = Object.assign({}, { a: 5 }, { B: 4, c: 89 });
 console.log(testObj)
 
-/* Object.create() easy version
+/* Object.create() easy version, not actual implementation
  create a new object based on the parameter passed in 
  create a temp F as a proxy, so child can only inherit reusable method, but will not
  inherit anything from the new Parent() instance which is normally set up as properties of this,
