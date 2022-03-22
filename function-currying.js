@@ -49,3 +49,23 @@ console.log(add(1, 2, 3, 4, 5));
 //         }
 //     }
 // }
+
+
+const infiniteCurry = fn => {
+  const next = (...args) => {
+    console.log("arguments avl",args);
+    return z => {
+      console.log("x value",z);
+      if (!z) {
+        return args.reduce((acc, a) => {
+          return fn.call(fn, acc, a)
+        }, 0);
+      }
+      return next(...args, z);
+    };
+  };
+  return next();
+};
+
+const iSum = infiniteCurry((x, y) => x + y);
+console.log(iSum(1)(3)(4)(2)());
