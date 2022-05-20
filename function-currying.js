@@ -7,7 +7,6 @@ function add(a, b, c, d, e) {
 }
 
 // console.log(add(1, 2, 3, 4, 5));
-
 function curryCustom(fn) {
   // args.length can be 1,2,3
   return function curried(...args) {
@@ -48,7 +47,8 @@ function curryCustom(fn) {
 // }
 
 function infiniteCurry(fn) {
-  // args.length can be 1,2,3
+  // curried function here to return a function because it needs to remember the args
+  // and separate it from the params it got from curry function
   const curried = (...args) => {
     return (...params) => {
       console.log(params)
@@ -62,6 +62,7 @@ function infiniteCurry(fn) {
       }
     }
   };
+  // you need to executed curried function which will return a params function
   return curried();
 }
 
